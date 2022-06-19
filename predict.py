@@ -92,6 +92,7 @@ def makeModel(df):
 
 def predPlot(df,pred):
     fig = plt.figure(figsize=(10, 4))
+    df = df.set_index('date')
     ax = df['price'].plot(label='truth')
     pred.plot(linestyle='--', color='#ff7823', ax=ax, label='forecast', alpha=.7, figsize=(14, 7))
 
