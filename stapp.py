@@ -8,7 +8,7 @@ import json
 import pickle 
 from st_aggrid import AgGrid
 import pandas as pd
-# from PIL import Image
+from PIL import Image
 
 from scipy import stats
 from scipy.stats import norm, skew, kurtosis
@@ -64,10 +64,10 @@ st.set_page_config(layout="wide")
 import streamlit.components.v1 as components
 
 ##TOP PAGE
-st.title("Azure Cledo")
+# st.title("Azure Cledo")
+st.sidebar.image(Image.open('AzureCledo.png'))
 st.subheader("Sentiment Based - Stock Predictor")
 st.markdown('<style>h1{color:dark-grey;font-size:62px}</style>',unsafe_allow_html=True)
-# st.sidebar.image(Image.open('logo.png'))
 # st.sidebar.image(Image.open('text.png'))
 
 @st.cache
