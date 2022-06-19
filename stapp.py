@@ -112,12 +112,12 @@ elif choice =="STOCK ANALYSIS":
     c1,c2 = st.columns((1,1))
     with c1:
         from nltk.corpus import stopwords
-        sw = stopwords.words('english')
+#         sw = stopwords.words('english')
         cek = df3['Text'].tolist()
         wordcloud = WordCloud (
                     background_color = 'white',
                     width = 650,
-                    stopwords =set(sw+[stocks,'https','http','co','PT']),
+                    stopwords =set([stocks,'https','http','co','PT']),
                     height = 400
                         ).generate(' '.join(cek))
         fig0 = px.imshow(wordcloud,title=f'Wordcloud of {stocks} Tweets')
