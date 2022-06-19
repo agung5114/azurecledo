@@ -28,10 +28,10 @@ sns.set_palette(colours)
 plt.rcParams['figure.figsize'] = (9, 6)
 sns.set_style('darkgrid')
 
-# import plotly.io as pio
-# import plotly.express as px
+import plotly.io as pio
+import plotly.express as px
 
-# pio.templates.default = "ggplot2"
+pio.templates.default = "simple_white"
 
 import snscrape.modules.twitter as sntwitter
 from textblob import TextBlob
