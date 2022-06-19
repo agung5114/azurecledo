@@ -8,7 +8,7 @@ import json
 import pickle 
 from st_aggrid import AgGrid
 import pandas as pd
-from PIL import Image
+# from PIL import Image
 
 from scipy import stats
 from scipy.stats import norm, skew, kurtosis
@@ -24,6 +24,7 @@ colours = ['#1F77B4', '#FF7F0E', '#2CA02C', '#DB2728', '#9467BD', '#8C564B', '#E
 
 sns.set_palette(colours)
 # %matplotlib inline
+import quantstats as qs
 plt.rcParams['figure.figsize'] = (9, 6)
 sns.set_style('darkgrid')
 
@@ -89,6 +90,7 @@ if choice =="TWEET SCRAPER":
 elif choice =="STOCK ANALYSIS":
     stocks = st.selectbox("Select Stock", ['adaro','ptba'])
     df =getData(stocks+'.csv')
+    df3 =getData(stocks+'_tw.csv')
     fig = plt.figure(figsize=(10, 4))
     sns.distplot(df['price'] , fit=norm);
     # Get the fitted parameters used by the function
@@ -102,11 +104,73 @@ elif choice =="STOCK ANALYSIS":
     plt.title('Price Distribution')
     st.pyplot(fig)
 
+    c1,c2 = st.columns((1,1))
+    with c1:
+        from nltk.corpus import stopwords
+        sw = stopwords.words('english')
+        cek = df3['Text'].tolist()
+        wordcloud = WordCloud (
+                    background_color = 'white',
+                    width = 650,
+                    stopwords =set(sw+[stocks,'https','http','co','PT']),
+                    height = 400
+                        ).generate(' '.join(cek))
+        fig0 = px.imshow(wordcloud,title=f'Wordcloud of {stocks} Tweets')
+        st.plotly_chart(fig0)
+    with c2:
+        import plotly.graph_objects as go
+        colors = ['gold', 'mediumturquoise', 'darkorange']
+        neu = df3[df3['Sentiment']=='neutral']
+        pos = df3[df3['Sentiment']=='positive']
+        neg = df3[df3['Sentiment']=='negative']
+
+        fig2 = go.Figure(data=[go.Pie(labels=['Neutral','Positive','Negative'],
+                                    values=[neu['Sentiment'].count(),pos['Sentiment'].count(),neg['Sentiment'].count()])])
+        fig2.update_traces(hoverinfo='label+percent', textinfo='value', textfont_size=20,
+                        marker=dict(colors=colors, line=dict(color='#000000', width=2)))
+        fig2.update_layout(title='Tweet Sentiment Proportions')
+        st.plotly_chart(fig2)
+
+    # qs.extend_pandas()
+    # stock = qs.utils.download_returns('ADRO.JK')
+    # components.html(stock.plot_snapshot(title='Facebook Performance'))
+    # st.write(qs.reports.html(stock, "ADRO.JK"))
+
 elif choice == "STOCK PREDICTION":
     stocks = st.selectbox("Select Stock", ['adaro','ptba'])
     df =getData(stocks+'.csv')
+    df2 =getData(stocks+'_fc.csv')
+    df2a = df2[df2['Type']=='Actual']
+    df2b = df2[df2['Type']=='Forecast']
     pr = makeModel(df)
     st.pyplot(predPlot(df,pr))
+    k1,k2 = st.columns((1,1))
+    with k1:
+        fig = go.Figure()
+        fig.add_trace(go.Scatter(x=df2a['Date'], y=df2a['Price_sentiment_positive'],
+                            mode='lines+markers',
+                            name='actual'))
+        fig.add_trace(go.Scatter(x=df2b['Date'], y=df2b['Price_sentiment_negative'],
+                            mode='lines',
+                            name='forecast min'))
+        fig.add_trace(go.Scatter(x=df2b['Date'], y=df2b['Price_sentiment_positive'],
+                            mode='lines',
+                            name='forecast max'))
+        
+        st.plotly_chart(fig)
+    with k2:
+        # size = 200*df['sentiment'].tolist()
+        size = [int(abs(x)*25) for x in df['sentiment'].tolist()]
+        fig4 = go.Figure()
+        fig4.add_trace(go.Scatter(x=df['date'], y=df['sentiment_positive'],
+                        mode='markers',marker_size=size,
+                        name='positive sentiment spot'))
+        fig4.add_trace(go.Scatter(x=df['date'], y=df['sentiment_negative'],
+                        mode='markers', marker_size=size,
+                        name='negative sentiment spot'))
+        st.plotly_chart(fig4)
+
+
     
 
 
