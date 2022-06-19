@@ -24,9 +24,14 @@ colours = ['#1F77B4', '#FF7F0E', '#2CA02C', '#DB2728', '#9467BD', '#8C564B', '#E
 
 sns.set_palette(colours)
 # %matplotlib inline
-import quantstats as qs
+# import quantstats as qs
 plt.rcParams['figure.figsize'] = (9, 6)
 sns.set_style('darkgrid')
+
+# import plotly.io as pio
+# import plotly.express as px
+
+# pio.templates.default = "ggplot2"
 
 import snscrape.modules.twitter as sntwitter
 from textblob import TextBlob
