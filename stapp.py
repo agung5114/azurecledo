@@ -38,6 +38,10 @@ from textblob import TextBlob
 
 def getPolarity(text):
     polarity = TextBlob(text).sentiment.polarity
+    return polarity
+    
+def getSentiment(polarity):
+#     polarity = TextBlob(text).sentiment.polarity
     if polarity>0:
       sent = "Positive"
     elif polarity<0:
@@ -56,8 +60,9 @@ def getStockSentiment(ticker,from_date,end_date):
         # tweet.retweetCount
     df3 = pd.DataFrame(tweets_list2, columns=['Datetime', 'Tweet Id', 'Text', 'Username'])
     # df3['Sentiment'] = getSentimentVader(df3['Text'].tolist())
-    df3['Sentiment_Polarity'] = df3['Text'].apply(getPolarity)
-    df3 = df3[['Datetime','Sentiment_Polarity','Username','Text']]
+    df3['Polarity'] = df3['Text'].apply(getPolarity)
+    df3['Sentiment'] = df3['Polarity'].apply(getSentiment)
+    df3 = df3[['Datetime','Sentiment,Polarity','Username','Text']]
     return df3
 
 st.set_page_config(layout="wide")
