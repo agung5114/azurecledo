@@ -38,7 +38,7 @@ from textblob import TextBlob
 
 def getPolarity(text):
     polarity = TextBlob(text).sentiment.polarity
-    return polarity
+    return int(polarity*1000)/1000
     
 def getSentiment(polarity):
 #     polarity = TextBlob(text).sentiment.polarity
