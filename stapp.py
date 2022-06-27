@@ -62,7 +62,7 @@ def getStockSentiment(ticker,from_date,end_date):
     # df3['Sentiment'] = getSentimentVader(df3['Text'].tolist())
     df3['Polarity'] = df3['Text'].apply(getPolarity)
     df3['Sentiment'] = df3['Polarity'].apply(getSentiment)
-    df3 = df3[['Datetime','Sentiment,Polarity','Username','Text']]
+    df3 = df3[['Datetime','Sentiment','Polarity','Username','Text']]
     return df3
 
 st.set_page_config(layout="wide")
