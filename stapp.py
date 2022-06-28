@@ -154,67 +154,42 @@ elif choice =="STOCK ANALYSIS":
     # st.write(qs.reports.html(stock, "ADRO.JK"))
 
 elif choice == "STOCK PREDICTION":
-    from datetime import datetime, timedelta, date
-    # stocks = st.selectbox("Select Stock", ['adaro','ptba'])
-    stocks = st.selectbox("Select Stock", ['ADRO.JK','PTBA.JK','TSLA'])
-    # start = st.date_input("from date",datetime.date(2022, 1, 1))
-    start = st.date_input("from date",date.today() - timedelta(days=550))
-    end = st.date_input("until date")
-    # df =getData(stocks+'.csv')
-    df = yf.download(stocks, start, end)
-    # df = getData(start,end,stocks)
-    # st.write(end_date)
-    # st.dataframe(df)
-    data = df.reset_index(level=0)
-    # data = data.reset_index(inplace=True)
-    # data['date'] = data['Date'].dt.date
-    for i in range(10):
-        data["price lag-" + str(i+1)]=data["Close"].shift(i+1)
-    data['MA5'] = data["Close"].rolling(5, closed='left').mean()
-    data['MA10'] = data["Close"].rolling(10, closed='left').mean()
-    data['MA20'] = data["Close"].rolling(20, closed='left').mean()
-    data['MA60'] = data["Close"].rolling(60, closed='left').mean()
-    # data = data.dropna(inplace=True)
-    st.dataframe(data)
-    data['price'] = data.Close
-    data['date'] = data.Date
-    # df = data[['Date','Close','price lag-1','price lag-2','price lag-3','price lag-4','price lag-5','price lag-6','price lag-7','price lag-8','price lag-9','price lag-10','MA5','MA10','MA20','MA60']]
-    # df = df.dropna(inplace=False)
-    # df =getData(stocks+'.csv')
-    df = data.iloc[60:]
-    # df2 =getData(stocks+'_fc.csv')
-    # df2a = df2[df2['Type']=='Actual']
-    # df2b = df2[df2['Type']=='Forecast']
-    # df2b = df2[df2['Date']<'2022-06-25']
+    @st.cache
+    def getData2(file):
+        df = pd.read_csv(file)
+        return df
+    stocks = st.selectbox("Select Stock", ['adaro','ptba'])
+    df =getData2(stocks+'.csv')
+    df2 =getData2(stocks+'_fc.csv')
+    df2a = df2[df2['Type']=='Actual']
+    df2b = df2[df2['Type']=='Forecast']
     pr = makeModel(df)
-    st.dataframe(df)
-    # st.pyplot(predPlot(df,pr))
+    st.pyplot(predPlot(df,pr))
     k1,k2 = st.columns((1,1))
     with k1:
         fig = go.Figure()
-        # fig.add_trace(go.Scatter(x=df2a['Date'], y=df2a['Price_sentiment_positive'],
-        #                     mode='lines+markers',
-        #                     name='actual'))
-        # fig.add_trace(go.Scatter(x=df2b['Date'], y=df2b['Price_sentiment_negative'],
-        #                     mode='lines',
-        #                     name='forecast min'))
-        # fig.add_trace(go.Scatter(x=df2b['Date'], y=df2b['Price_sentiment_positive'],
-        #                     mode='lines',
-        #                     name='forecast max'))
+        fig.add_trace(go.Scatter(x=df2a['Date'], y=df2a['Price_sentiment_positive'],
+                            mode='lines+markers',
+                            name='actual'))
+        fig.add_trace(go.Scatter(x=df2b['Date'], y=df2b['Price_sentiment_negative'],
+                            mode='lines',
+                            name='forecast min'))
+        fig.add_trace(go.Scatter(x=df2b['Date'], y=df2b['Price_sentiment_positive'],
+                            mode='lines',
+                            name='forecast max'))
         
         st.plotly_chart(fig)
     with k2:
         # size = 200*df['sentiment'].tolist()
-        st.write('test')
-        # size = [int(abs(x)*25) for x in df['sentiment'].tolist()]
-        # fig4 = go.Figure()
-        # fig4.add_trace(go.Scatter(x=df['date'], y=df['sentiment_positive'],
-        #                 mode='markers',marker_size=size,
-        #                 name='positive sentiment spot'))
-        # fig4.add_trace(go.Scatter(x=df['date'], y=df['sentiment_negative'],
-        #                 mode='markers', marker_size=size,
-        #                 name='negative sentiment spot'))
-        # st.plotly_chart(fig4)
+        size = [int(abs(x)*25) for x in df['sentiment'].tolist()]
+        fig4 = go.Figure()
+        fig4.add_trace(go.Scatter(x=df['date'], y=df['sentiment_positive'],
+                        mode='markers',marker_size=size,
+                        name='positive sentiment spot'))
+        fig4.add_trace(go.Scatter(x=df['date'], y=df['sentiment_negative'],
+                        mode='markers', marker_size=size,
+                        name='negative sentiment spot'))
+        st.plotly_chart(fig4)
 
 
     
